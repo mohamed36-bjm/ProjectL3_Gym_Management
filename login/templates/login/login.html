@@ -1,0 +1,38 @@
+
+{% block title %}Login - PowerFitness{% endblock %}
+
+{% block extra_css %}
+<style>
+    .formulaire-father { display:flex; justify-content:center; align-items:center; min-height: 80vh; }
+    .formulaire { margin:40px 0; width:400px; }
+    input { width: 100%; padding: 12px 15px; background-color: #111; color: #fff; border: 1px solid #444; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
+    .formulaire button { width: 200px; padding: 15px; background-color: #e46464; color: white; border: none; border-radius: 10px; cursor: pointer; display: block; margin: 20px auto; }
+    h1 { color:white; text-align: center; }
+    .formulaire a { color:#888; text-decoration: none; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="formulaire-father">
+    <div class="formulaire">
+        <h1>Connecter à votre compte</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="E-mail" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            {% if messages %}
+    {% for message in messages %}
+        <div class="alert-danger">
+            <p style="color: #ff4d4d;font-size: 14px;margin-top: 5px;text-align: left;width: 100%;">
+                {{ message }}
+            </p>
+        </div>
+    {% endfor %}
+{% endif %}
+            <p><a href="#">Mot de passe oublié ?</a></p>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

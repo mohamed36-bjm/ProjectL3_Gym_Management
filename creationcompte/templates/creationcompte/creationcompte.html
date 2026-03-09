@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Création de compte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: #222;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .type-selector {
+            text-align: center;
+            background: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        .formClom {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr; /*ta les colom fi 3 */
+            gap: 20px;
+        }
+        .column {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .center-column {
+            background-color: #333;
+            border: 2px solid #444;
+        }
+        h3 {
+            text-align: center;
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+            font-size: 18px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #111;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button.submit-btn {
+            width: 200px;
+            padding: 15px;
+            background-color: #e46464;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .hidden {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+        .logo-nav{
+            display:flex;
+            justify-content:space-between;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form method="POST" enctype="multipart/form-data"> <!-- ta certificat -->
+        {% csrf_token %}
+
+        <div class="type-selector">
+            <label style="margin-right: 20px;">
+                <input type="radio" name="user_type" value="coach" id="coachRadio" onclick="toggleFields()" style="width: auto;"> 
+                <i class="fas fa-chalkboard-teacher"></i> Coach
+            </label>
+            <label>
+                <input type="radio" name="user_type" value="athlete" id="athleteRadio" onclick="toggleFields()" checked style="width: auto;"> 
+                <i class="fas fa-running"></i> Athlete
+            </label>
+        </div>
+
+<div class="formClom">
+            <div id="coachSec" class="column hidden">
+                <h3>Infos Coach</h3>
+                <input type="text" name="specialite" placeholder="Spécialité">
+                <textarea name="bio" rows="4" placeholder="Votre Bio..."></textarea>
+                <label style="font-size: 12px;">Certificat (PDF/Image):</label>
+                <input type="file" name="certificat">
+            </div>
+
+            <div class="column center-column">
+                <h3>Infos Communes</h3>
+                <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                <input type="text" name="phone" placeholder="Téléphone">
+            </div>
+            <div id="athleteSec" class="column">
+                <h3>Infos Athlete</h3>
+                <input type="number" name="age" placeholder="Age">
+                <input type="number" name="height" placeholder="Taille (cm)">
+                <input type="number" name="weight" placeholder="Poids (kg)">
+                <textarea name="cas_medicale" rows="3" placeholder="Cas Médicale..."></textarea>
+            </div>
+        </div>
+        <button type="submit" class="submit-btn">Créer le compte</button>
+    </form>
+</div>
+
+<script>
+    function toggleFields() {
+        const isCoach = document.getElementById('coachRadio').checked;
+        const coachSec = document.getElementById('coachSec');
+        const athleteSec = document.getElementById('athleteSec');
+
+        if (isCoach) {
+            coachSec.classList.remove('hidden');
+            athleteSec.classList.add('hidden');
+            <!---->
+            setDisabled('#coachSec', false);
+            setDisabled('#athleteSec', true);
+        } else {
+            coachSec.classList.add('hidden');
+            athleteSec.classList.remove('hidden');
+            //activer les champs reserver ta coach wela desactiver ta athlete
+            setDisabled('#coachSec', true);
+            setDisabled('#athleteSec', false);
+        }
+    }
+
+    function setDisabled(selector, state) {
+        const inputs = document.querySelectorAll(selector + ' input, ' + selector + ' textarea');
+        inputs.forEach(input => input.disabled = state);
+    }
+
+    // en chargement ta la page le fonction executer bah verifier l etat lwle
+    window.onload = toggleFields;
+</script>
+
+</body>
+</html>
