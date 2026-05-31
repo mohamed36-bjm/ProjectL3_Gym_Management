@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GYM System | Dashboard Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body { background: #F7F7F7; font-family: "Helvetica Neue", Roboto, Arial, sans-serif; margin: 0; }
+        .main_container { display: flex; min-height: 100vh; }
+        
+        /* القائمة الجانبية المحدثة */
+        .left_col { 
+            background: #2A3F54; 
+            width: 230px; 
+            color: white; 
+            flex-shrink: 0; 
+            position: fixed; 
+            height: 100%; 
+            z-index: 100;
+        }
+        
+        .right_col { 
+            flex-grow: 1; 
+            margin-left: 230px; 
+            padding: 20px; 
+            background: #F7F7F7; 
+        }
+
+        .nav_title { background: #2A3F54; padding: 15px; text-align: center; font-size: 19px; font-weight: bold; border-bottom: 1px solid #3e4f5f; }
+        
+        /* عرض معلومات المستخدم في الأعلى */
+        .profile_info { padding: 20px; text-align: center; background: #233343; border-bottom: 1px solid #34495e; }
+        .profile_info h2 { margin: 5px 0; font-size: 18px; color: #ECF0F1; }
+
+        .side-menu { list-style: none; padding: 0; margin-top: 10px; }
+        .side-menu li a { 
+            color: #E7E7E7; 
+            text-decoration: none; 
+            display: block; 
+            padding: 13px 20px; 
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .side-menu li a:hover { background: #3e4f5f; color: white; }
+        .side-menu li a i { margin-right: 10px; width: 20px; text-align: center; }
+
+        /* تنسيق الجداول واللوحات */
+        .x_panel { background: #fff; border: 1px solid #E6E9ED; padding: 15px; border-radius: 4px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .search-box { background: #fff; padding: 20px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 25px; }
+        .form-inline .form-control { margin-right: 10px; min-width: 150px; }
+        .label-manager {
+    background-color: #d9534f;
+    color: white;
+}
+    </style>
+</head>
+<body class="nav-md">
+    <div class="main_container">
+        <div class="left_col">
+            <div class="nav_title"><span><i class="fa fa-paw"></i> GYM System</span></div>
+            
+            <div class="profile_info">
+                <span>Bienvenue,</span>
+                <h2>{{ request.user.username }}</h2>
+            </div>
+
+            <ul class="nav side-menu">
+                <li><a href="{% url 'manager_statistiques' %}" style="color: white; font-weight: bold;"><i class="fa fa-bar-chart"></i> Statistiques</a></li>
+                <li><a href="{% url 'manager_dashboard' %}"><i class="fa fa-home"></i> Dashboard</a></li>
+                <li><a id="btn-show-notification"><i class="fa fa-paper-plane"></i> Envoyer Notification</a></li>
+                
+<li>
+    <a href="{% url 'manage_shop' %}">
+        <i class="fa fa-shopping-cart"></i> Gérer la Boutique</a>
+</li>
+                <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Déconnexion</a></li>
+            </ul>
+        </div>
+
+        <div class="right_col">
+            {% block content %}
+             
+            <div id="main-dashboard-content">
+                <div class="page-title">
+                    <h3><i class="fa fa-users"></i> Gestion des Utilisateurs</h3>
+                </div>
+
+                <div class="search-box">
+                    <form method="get" action="{% url 'manager_dashboard' %}" class="form-inline">
+                        <div class="form-group">
+                            <input type="text" name="search_name" class="form-control" placeholder="Rechercher par nom..." value="{{ search_name|default:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <select name="role" class="form-control">
+                                <option value="">Tous les rôles</option>
+                                <option value="coach" {% if selected_role == 'coach' %}selected{% endif %}>Coach</option>
+                                <option value="athlete" {% if selected_role == 'athlete' %}selected{% endif %}>Athlète</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select name="sport" class="form-control">
+                                <option value="">Tous les sports</option>
+                                <option value="CrossFit" {% if selected_sport == 'CrossFit' %}selected{% endif %}>CrossFit</option>
+                                <option value="Yoga" {% if selected_sport == 'Yoga' %}selected{% endif %}>Yoga</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> Filtrer</button>
+                        <a href="{% url 'manager_dashboard' %}" class="btn btn-default">Réinitialiser</a>
+                    </form>
+                </div>
+
+                <div class="x_panel">
+                    <table class="table table-striped jambo_table">
+                        <thead>
+                            <tr class="headings">
+                                <th>Nom d'utilisateur</th>
+                                <th>Rôle</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                            {% if not u.is_superuser %}
+                            <tr>
+                                <td>{{ u.username }}</td>
+                                <td>
+                                    {% if u.is_coach %}
+                                        <span class="label label-info">Coach</span>
+                                    {% else %}
+                                        <span class="label label-success">Athlète</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <td>
+                                        <a href="{% url 'user_info' u.id %}" class="btn btn-info btn-xs">
+                                        <i class="fa fa-info-circle"></i> Info
+                                        </a>
+                                    </td>
+                                </td>
+                            </tr>
+                             {% endif %} {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">Aucun utilisateur trouvé.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endblock %}
+
+            <div id="notification-section" style="display: none;">
+                <div class="page-title">
+                    <h3><i class="fa fa-paper-plane"></i> Envoyer une Notification</h3>
+                </div>
+                
+                <div class="x_panel">
+                    <form method="POST" action="{% url 'send_notification' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Votre Message :</label>
+                            <textarea name="message" class="form-control" rows="6" placeholder="Écrivez votre message ici..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Joindre une image (optionnel) :</label>
+                            <input type="file" name="image" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Destinataires :</label>
+                            <select name="role" class="form-control">
+                                <option value="all">Tout le monde</option>
+                                <option value="coach">Coachs uniquement</option>
+                                <option value="athlete">Athlètes uniquement</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ln_solid"></div>
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fa fa-send"></i> Envoyer à tout le monde
+                        </button>
+                        <button type="button" id="btn-cancel-notif" class="btn btn-default btn-block">Annuler</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const dashboardContent = document.getElementById('main-dashboard-content');
+        const notificationSection = document.getElementById('notification-section');
+        const showNotifBtn = document.getElementById('btn-show-notification');
+        const cancelNotifBtn = document.getElementById('btn-cancel-notif');
+
+        
+        showNotifBtn.onclick = function() {
+            dashboardContent.style.display = 'none';
+            notificationSection.style.display = 'block';
+        };
+
+       
+        cancelNotifBtn.onclick = function() {
+            notificationSection.style.display = 'none';
+            dashboardContent.style.display = 'block';
+        };
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

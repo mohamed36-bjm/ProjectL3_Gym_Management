@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+</head>
+<body>
+    <style>
+        body{
+            background-color: #222;
+            font-family: sans-serif;
+        }
+        h1{
+            color:white;
+            text-align:center;
+        }
+        .formulaire{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:500px;
+        }
+        input {
+            background-color: #111 !important;
+            color: #888 !important;
+            border: 1px solid #444 !important;
+            padding: 10px;
+            width: 300px;
+            border-radius: 8px;
+            outline: none; 
+            font-size: 16px;
+        }
+        input:-webkit-autofill,input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #111 inset !important;
+            -webkit-text-fill-color: #888 !important;
+        }
+        select{
+            padding:10px;
+            width:300px;
+            border-radius:8px;
+            border:none;
+            background-color:#111;
+            color:#888;
+            border-color:#444;
+            font-size: 16px;
+        }
+        .container{
+            display:flex;
+            justify-content:space-between;
+        }
+        small{
+            background-color:green;
+            color:white;
+            font-size:15px;
+            padding:7px;
+            border-radius:6px;
+        }
+        button{
+            background-color:blue;
+            color:white;
+            border:none;
+            border-radius:8px;
+            padding:10px;
+            width:100px
+        }
+        label{
+            color:white;
+        }
+        button:hover{
+            cursor:pointer;
+        }
+    </style>
+
+    {% block content %}
+    <h1>Payer les achats ici</h1>
+    <div class="formulaire">
+        <form method="POST" action="{% url 'payer' %}?product_id={{ item.id }}">
+            {% csrf_token %}
+            <p><label>Produit: {{ item.name }}</label></p>
+            <p><label>Numero de la carte Edahabia:</label></p>
+            <p><input id="card-number" name="sub-numero" type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" autocomplete="off" required></p>
+            <p><label>CVV:</label></p>
+            <p><input type="password" name="sub-cvv" placeholder="XXX" maxlength="3" autocomplete="new-password" required></p>
+            <p><label>Date d'expert de la carte:</label></p>
+            <p><input id="date-input" name="sub-date" type="text" placeholder="MM/AA" maxlength="5" required></p> 
+            <div class="container">
+                <small id="total">total:{{ item.price }} DA</small>
+                <button type="submit">Payer</button>
+            </div>
+        </form>
+    </div>
+    {% endblock content %}
+
+    <script>
+        let cardInput = document.getElementById("card-number");
+        cardInput.oninput = function () {
+            let value = cardInput.value.replace(/\D/g, '');
+            let formattedValue = value.match(/.{1,4}/g);
+            cardInput.value = formattedValue ? formattedValue.join(' ') : "";
+        };
+
+        let dateInput = document.getElementById("date-input");
+        dateInput.oninput = function() {
+            let value = this.value.replace(/\D/g, ''); 
+            if (value.length > 0 && (value[0] !== '0' && value[0] !== '1')) value = ''; 
+            if (value.length >= 2) {
+                let month = value.substring(0, 2);
+                if (parseInt(month) > 12) value = '12' + value.substring(2); 
+                else if (parseInt(month) === 0) value = '01' + value.substring(2); 
+            }
+            let formattedValue = value.match(/.{1,2}/g);
+            this.value = formattedValue ? formattedValue.join('/') : "";
+        }
+    </script>
+</body>
+</html>

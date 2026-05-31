@@ -94,7 +94,7 @@
         </form>
     {% endblock content %}
     <script>
-        //modifier la valeur de total:
+        
         let total = document.getElementById("total");
         let type = document.getElementById("type");
         type.onchange=function(){
@@ -109,24 +109,25 @@
                 total.textContent="total:500 DA";
             }
         }
-        //numero de la carte string->number + espace automatique entre 4 chiffres
+        
         let cardInput = document.getElementById("card-number");
         cardInput.oninput = function () {
-            //eliminer tous non nbr:
+            
             let value = cardInput.value.replace(/\D/g, '');
-            //variable formattedValue utiliser pour sauvgarder numero entrer séparé en 4 chiffres  
+          
             let formattedValue = value.match(/.{1,4}/g);
             if (formattedValue) {
                 cardInput.value = formattedValue.join(' ');
             } else {
-                cardInput.value = "";
+                cardInput.value = ""; 
             }
         };
-        //date d'expert:
+       
         let dateInput = document.getElementById("date-input");
         dateInput.oninput = function() {
             let value = this.value.replace(/\D/g, ''); 
             if (value.length > 0) {
+              
                 if (value[0] !== '0' && value[0] !== '1') {
                     value = ''; 
                 }

@@ -4,12 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib import messages
 from creationcompte.models import Seance, Inscription, AthleteProfile, CoachProfile,Notification
+from shop.models import Product
 @login_required
 def athlete_profile_view(request):
     user = request.user
     
     all_seances = Seance.objects.all().order_by('heure')
-    notifications = Notification.objects.filter(user=user).order_by('-created_at')[:10]
+   
+    notifications = Notification.objects.filter(user=user).order_by('-created_at')
+    products = Product.objects.all()
 
     if user.is_coach:
         profile = CoachProfile.objects.filter(user=user).first()
@@ -30,14 +33,17 @@ def athlete_profile_view(request):
             'type': s.type,
             'jour': jour_format, 
             'time': s.heure.strftime('%H:%M'),
-            'places': s.places_disponibles,   # نرسل الرقم المتاح مباشرة
-            'total': s.places_totale,        # نرسل الإجمالي الثابت
+            'places': s.places_disponibles,   
+            'total': s.places_totale,        
             'salle': s.salle,
             'coach': s.coach_name.username,
             'is_registered': is_user_registered,
         })
 
     days_list = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+    
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+
 
     context = {
         'user': user,
@@ -48,26 +54,67 @@ def athlete_profile_view(request):
         'sessions_json': json.dumps(sessions_list),
         'notifications': notifications,
         'days_list': days_list,
+        'products': products,
+        'unread_count': unread_count, 
     }
     return render(request, 'profile/compteprofile.html', context)
 
 @login_required
+def update_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.save()
+
+        if user.is_coach:
+            profile = user.coachprofile
+            profile.specialite = request.POST.get('specialite', profile.specialite)
+        else:
+            profile = user.athleteprofile
+            
+            
+            weight = request.POST.get('weight')
+            height = request.POST.get('height')
+            age = request.POST.get('age')
+           
+            profile.weight = weight if weight and weight.strip() != '' else None
+            profile.height = height if height and height.strip() != '' else None
+            profile.age = age if age and age.strip() != '' else None
+            
+        if 'image' in request.FILES:
+            profile.image = request.FILES['image']
+            
+        profile.save() 
+            
+        messages.success(request, "Profil mis à jour avec succès !")
+        return redirect('athlete_profile_view') 
+    return redirect('athlete_profile_view')
+@login_required
+def delete_notification(request, notif_id):
+    if request.method == 'POST':
+        notif = get_object_or_404(Notification, id=notif_id, user=request.user)
+        notif.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error' , 'message': 'Méthode non autorisée'}, status=405)
+
+@login_required
 def creer_seance(request):
     if request.method == 'POST':
-        # 1. استلام البيانات من الفورم
+       
         type_seance = request.POST.get('type_seance')
         jour = request.POST.get('jour_seance')
         heure = request.POST.get('heure_seance')
         places = request.POST.get('places_totale')
         salle = request.POST.get('salle_seance')
 
-        # 2. التحقق من ملء جميع الحقول
+       
         if not all([type_seance, jour, heure, places, salle]):
             messages.error(request, "Veuillez remplir tous les champs !")
             return redirect('/profile/#section-booking')
 
         try:
-            # 3. التحقق من وجود تضارب (نفس اليوم والساعة والقاعة)
+           
             conflit = Seance.objects.filter(
                 jour=jour,
                 heure=heure,
@@ -81,18 +128,18 @@ def creer_seance(request):
                 )
                 return redirect('/profile/#section-booking')
             
-            # 4. إنشاء الحصة مع ضبط المقاعد المتاحة لتساوي الإجمالي في البداية
+            
             Seance.objects.create(
                 type=type_seance,
                 jour=jour,
                 heure=heure,
-                places_totale=int(places),        # الرقم الذي حدده المدرب
-                places_disponibles=int(places),   # نجعله مساوياً للإجمالي عند الإنشاء
+                places_totale=int(places),        
+                places_disponibles=int(places),   
                 salle=salle,
                 coach_name=request.user
             )
 
-            # 5. إنشاء إشعار للمدرب
+            
             Notification.objects.create(
                 user=request.user,
                 message=f"Nouvelle séance de {type_seance} créée pour le {jour} à {heure}."
@@ -114,9 +161,9 @@ def booking(request, seance_id):
             seance = get_object_or_404(Seance, id=seance_id)
             
             if request.user in seance.participants.all():
-                # --- حالة الإلغاء ---
+                
                 seance.participants.remove(request.user)
-                seance.places_disponibles += 1  # نزيد المتاح فقط
+                seance.places_disponibles += 1  
                 seance.save()
                 
                 Notification.objects.create(
@@ -125,10 +172,10 @@ def booking(request, seance_id):
                 )
                 return JsonResponse({'status': 'success'})
             else:
-                # --- حالة الحجز المباشر ---
+               
                 if seance.places_disponibles > 0:
                     seance.participants.add(request.user)
-                    seance.places_disponibles -= 1 # ننقص المتاح فقط
+                    seance.places_disponibles -= 1 
                     seance.save()
                     return JsonResponse({'status': 'success'})
                 else:
@@ -136,43 +183,36 @@ def booking(request, seance_id):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error'}, status=400)
-from django.db import transaction # أضف هذا الاستيراد في الأعلى
+from django.db import transaction 
 
 @login_required
 def supprimer_seance(request, seance_id):
     if request.method == 'POST':
-        # 1. جلب الحصة والتأكد أن المدرب هو صاحبها
+       
         seance = get_object_or_404(Seance, id=seance_id, coach_name=request.user)
-        
         try:
-            # 2. حفظ المعلومات الأساسية قبل الحذف
+          
             type_name = str(seance.type)
             jour_name = str(seance.jour)
-            
-            # 3. جلب قائمة المتدربين (Athletes) المسجلين في هذه الحصة
-            # استعملنا .athlete_id لأن الحقل في الموديل اسمه athlete
+           
             ids_athletes = list(Inscription.objects.filter(seance=seance).values_list('athlete_id', flat=True))
-
-            # 4. حذف الحصة نهائياً (هذا سيحذف الـ Inscriptions تلقائياً)
             seance.delete()
-
-            # 5. إرسال إشعار للمدرب (صاحب الحصة)
+           
             Notification.objects.create(
                 user=request.user,
                 message=f"Séance de {type_name} du {jour_name} supprimée avec succès."
             )
 
-            # 6. إرسال الإشعارات للمتدربين الذين كانوا مسجلين
+           
             for a_id in ids_athletes:
                 Notification.objects.create(
-                    user_id=a_id, # هنا نربط الإشعار بـ ID المستخدم (المتدرب)
+                    user_id=a_id,
                     message=f"Attention: La séance de {type_name} du {jour_name} a été annulée par le coach."
                 )
 
             return JsonResponse({'status': 'success'})
 
         except Exception as e:
-            # في حال حدوث أي خطأ، نضمن حذف الحصة على الأقل
             if seance.id:
                 seance.delete()
             return JsonResponse({'status': 'success', 'debug_msg': str(e)})

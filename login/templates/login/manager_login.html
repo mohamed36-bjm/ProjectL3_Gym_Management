@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>connexion manager</title>
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .formulaire-father {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .formulaire {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+        }
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #1A1A1A;
+            color: white;
+            border: 1px solid  #1f9e83;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 8px rgba(38, 185, 154, 0.2);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            margin-bottom: 12px;
+        }
+    </style>
+</form>
+</head>
+<body>
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="email" name="email" placeholder="E-mail" required>
+    <input type="password" name="password" placeholder="Mot de passe" required>
+
+    <button type="submit">Login </button>
+    
+</body>
+</html>

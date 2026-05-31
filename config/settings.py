@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
     'creationcompte',
     'compteprofile',
     'login',
     'payment',
+    'manager',
+    'shop',
+    'home',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +122,4 @@ USE_TZ = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_URL = 'static/'
+

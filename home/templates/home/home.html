@@ -1,0 +1,342 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFitness - Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+     
+        body {
+            background-color: #111;
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+    
+        .custom-navbar {
+            background-color: #222;
+            border-bottom: 1px solid #444;
+            padding: 15px 0;
+            width: 100%;
+        }
+        .nav-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-brand {
+            color: white;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .nav-brand:hover {
+            color: #e46464;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-link {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .nav-link:hover {
+            color: white;
+        }
+
+        
+        .container {
+            background-color: #111;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+        }
+        
+        
+        .card-bg {
+            background-color: #222;
+        }
+        
+        ul {
+            list-style: none !important;
+            padding-left: 20px;
+        }
+
+        
+        .a_propos {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 15px;
+            box-sizing: border-box;
+        }
+        .a_propos h3 {
+            margin: 0 0 10px 0;
+            padding: 6px 10px;
+        }
+        .a_propos p {
+            margin: 0;
+            padding: 0 10px;
+            line-height: 1.6;
+        }
+
+       
+        .equipement_horaire {
+            border-radius: 15px;
+            background-color: #111;
+            flex: 1;
+        }
+        .equipement_services {
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .equipement_services h3 {
+            margin: 0 0 10px 0;
+            padding: 6px 10px;
+        }
+        .equipement_services li {
+            margin-bottom: 8px;
+        }
+        .equipement_services i {
+            color: rgb(104, 206, 104);
+            margin-right: 10px;
+        }
+
+       
+        .horaire {
+            border-radius: 15px;
+            padding: 15px;
+        }
+        .horaire h3 {
+            margin: 0 0 10px 0;
+            padding: 6px 10px;
+        }
+        .horaire h4 {
+            margin: 10px 0 5px 0;
+            padding: 0 10px;
+        }
+        .horaire p {
+            margin: 5px 0;
+            padding: 0 15px;
+        }
+
+      
+        .contacter {
+            width: 300px;
+            padding: 30px;
+            margin-left: 40px;
+            border-radius: 15px;
+            box-sizing: border-box;
+        }
+        .contacter h3 {
+            margin: 0 0 15px 0;
+        }
+        .contacter p {
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        .contacter i {
+            margin-right: 10px;
+        }
+        .contacter a {
+            text-decoration: none; 
+            display: block;
+            margin-top: 20px;
+        }
+        .contacter button {
+            width: 100%;
+            padding: 12px;
+            color: white;
+            background-color: #007bff;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            outline: none;
+            border: none;
+            transition: 0.3s;
+        }
+        .contacter button:hover {
+            background-color: #0056b3;
+            cursor: pointer;
+        }
+
+        
+        .map-section {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: #111;
+        }
+        .map-section h3 {
+            margin-bottom: 15px;
+        }
+
+       
+        .commencer {
+            text-align: center;
+            width: 60%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .commencer p {
+            margin: 0 0 15px 0;
+        }
+        .commencer a {
+            text-decoration: none;
+        }
+        .commencer button {
+            padding: 12px 35px;
+            color: rgb(0, 0, 0);
+            background-color: rgb(228, 100, 100);
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            outline: none;
+            border: none;
+            transition: 0.3s;
+        }
+        .commencer button:hover {
+            background-color: rgb(200, 80, 80);
+            cursor: pointer;
+        }
+
+        
+        .custom-footer {
+            background-color: #222;
+            color: #aaa;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 60px;
+            border-top: 1px solid #444;
+            width: 100%;
+        }
+        .footer-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .custom-footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="custom-navbar">
+    <div class="nav-container">
+        <a class="nav-brand" href="/dashboard/">
+            <i class="fas fa-dumbbell"></i>
+            <span>GYM Manager</span>
+        </a>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'creationcompte' %}">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div style="background-color: #111; width: 100%;">
+    <img style="height: 400px; width: 100%; object-fit: cover; display: block;" src="{% static 'images/4.jpg' %}" alt="Gym Front">
+</div>
+
+<div class="a_propos card-bg">
+    <h3>À Propos</h3>
+    <p>Cette salle de sport dispose d’équipements modernes et bien entretenus, offrant un cadre propice à l’entraînement. Le personnel est accueillant et compétent, toujours prêt à donner des conseils. Les installations incluent une piscine propre et un espace dédié aux femmes. L’établissement est soigneusement nettoyé et maintenu en parfait état de propreté.</p>
+</div>
+
+<div class="container">
+    <div class="equipement_horaire">    
+        <div class="equipement_services card-bg">
+            <h3>Equipement&Services</h3>
+            <ul>
+                <li><i class="far fa-check-circle"></i> Piscine</li>
+                <li><i class="far fa-check-circle"></i> Vestiaire</li>
+                <li><i class="far fa-check-circle"></i> Equipements modernes</li>
+                <li><i class="far fa-check-circle"></i> Salle de sport spéciale femmes</li>
+            </ul>
+        </div>
+        
+        <div class="horaire card-bg">
+            <h3>Horaires d'ouverture</h3>
+            <h4 style="color: rgb(78, 171, 193);"><i class="fa-solid fa-mars"></i> Hommes</h4>
+            <p>samedi-mardi-jeudi: 8:00 à 13:00 | 18:00 à 22:30</p>
+            <p>dimanche-lundi-mercredi: 8:00 à 22:30</p>
+            <h4 style="color: pink;"><i class="fa-solid fa-venus"></i> Femmes</h4>
+            <p>samedi-mardi-jeudi-vendredi: 13:00 à 18:00</p>
+        </div>
+    </div>
+
+    <div class="contacter card-bg">
+        <h3>Information de contact</h3>
+        <p><i style="color: rgb(0, 157, 255);" class="fa-solid fa-location-dot"></i>Adresse : WQC3+29W, Bd Seddik Benyahia, Annaba</p>
+        <p><i style="color: rgb(34, 182, 34);" class="fa-solid fa-phone"></i>Téléphone : +213 667 89 23 10</p>
+        
+        <a href="https://wa.me/213667892310?text=Bonjour,%20je%20souhaite%20avoir%20plus%20d'informations%20sur%20les%20abonnements%20de%20la%20salle." target="_blank">
+            <button>Contacter la salle</button>
+        </a>
+    </div>
+</div>
+
+<div class="map-section">
+    <h3>Localisation</h3>
+    <iframe
+      src="https://maps.google.com/maps?q=Bd%20Seddik%20Benyahia,%20Annaba&t=&z=13&ie=UTF-8&iwloc=&output=embed"
+      width="100%"
+      height="450"
+      style="border:0; border-radius: 15px;"
+      allowfullscreen=""
+      loading="lazy">
+    </iframe>
+</div>
+
+<div class="commencer card-bg">
+    <p>Si vous êtes intéressé par notre activité, cliquez sur ce bouton</p>
+    <a href="{% url 'login' %}"><button>Commencer</button></a>
+</div>
+
+<footer class="custom-footer">
+    <div class="footer-container">
+        <p>© 2026 GYM Management System. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

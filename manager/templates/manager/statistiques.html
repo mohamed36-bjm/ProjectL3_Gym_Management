@@ -1,0 +1,99 @@
+{% extends "manager/dashboard.html" %}
+
+{% block content %}
+<div id="main-statistics-content">
+    <div class="page-title">
+        <h3><i class="fa fa-bar-chart"></i> Statistiques Générales</h3>
+    </div>
+
+    <div class="row tile_count" style="margin-bottom: 30px;">
+        <div class="col-md-3 col-sm-6 col-xs-12 tile_stats_count" style="border-right: 2px solid #E6E9ED; text-align: center;">
+            <span class="count_top" style="color: #73879C; font-size: 13px;"><i class="fa fa-user"></i> Total Athlètes</span>
+            <div class="count" style="font-size: 30px; font-weight: bold; color: #2A3F54;">{{ total_athletes }}</div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 tile_stats_count" style="border-right: 2px solid #E6E9ED; text-align: center;">
+            <span class="count_top" style="color: #73879C; font-size: 13px;"><i class="fa fa-user-md"></i> Total Coachs</span>
+            <div class="count" style="font-size: 30px; font-weight: bold; color: #1ABB9C;">{{ total_coaches }}</div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 tile_stats_count" style="border-right: 2px solid #E6E9ED; text-align: center;">
+            <span class="count_top" style="color: #73879C; font-size: 13px;"><i class="fa fa-shopping-cart"></i> Commandes Boutique</span>
+            <div class="count" style="font-size: 30px; font-weight: bold; color: #34495E;">{{ total_orders }}</div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 tile_stats_count" style="text-align: center;">
+            <span class="count_top" style="color: #73879C; font-size: 13px;"><i class="fa fa-money"></i> Chiffre d'affaires</span>
+            <div class="count" style="font-size: 30px; font-weight: bold; color: #9B59B6;">{{ total_sales }} DA</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-pie-chart"></i> Répartition des Sports (Séances)</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="text-align: center;">
+                    <canvas id="sportsPieChart" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-line-chart"></i> Activités du Système</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <canvas id="activityLineChart" style="max-height: 280px Haus;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    
+    const ctxPie = document.getElementById('sportsPieChart').getContext('2d');
+    const sportsPieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: {{sport_labels|safe}},
+            datasets: [{
+                data: {{ sport_counts|safe }},
+                backgroundColor: ['#1ABB9C', '#34495E', '#9B59B6', '#3498DB', '#E74C3C'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+   
+    const ctxLine = document.getElementById('activityLineChart').getContext('2d');
+    const activityLineChart = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+            labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            datasets: [{
+                label: 'Présence des Athlètes',
+                data: [12, 19, 3, 5, 2, 3, 15], 
+                borderColor: '#1ABB9C',
+                backgroundColor: 'rgba(26, 187, 156, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
+</script>
+{% endblock %}
