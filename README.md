@@ -46,4 +46,3 @@ Lancer le serveur : ```bash
 python manage.py runserver
 
 
-adi bein nektebha fi readme
