@@ -10,28 +10,28 @@
     <link href="https://cdn.jsdelivr.net/npm/gentelella@1.4.0/build/css/custom.min.css" rel="stylesheet">
 
     <style>
-        /* تخصيصات إضافية متوافقة مع Gentelella والهوية الخاصة بك */
+       
         :root { --primary-dark: #2A3F54; --accent-red: #e74c3c; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #F7F7F7; }
         
-        /* تعديل هيكل الـ Sidebar الحالي ليتناسق مع ألوان Gentelella الاحترافية */
+     
         .sidebar { width: 250px; background: var(--primary-dark); color: white; display: flex; flex-direction: column; padding: 20px; position: fixed; height: 100vh; top:0; left:0; z-index: 100; }
         .sidebar-item { padding: 13px 15px; margin: 5px 0; cursor: pointer; border-radius: 4px; transition: 0.3s; color: #ECF0F1; font-weight: 500; }
         .sidebar-item i { margin-right: 10px; width: 20px; text-align: center; }
         .sidebar-item:hover, .sidebar-item.active { background: #1ABB9C; color: white; }
         .username-display { font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; color: #1ABB9C; padding-bottom: 15px; font-size: 16px; text-align: center;}
 
-        /* إزاحة المحتوى الرئيسي لكي لا يختفي تحت الـ Sidebar الثابت */
+       
         .main-content { margin-left: 250px; padding: 30px; min-height: 100vh; }
         .hidden { display: none !important; }
 
-        /* الألوان الخاصة ببطاقات الحصص الرياضية */
+   
         .type-crossfit { background-color: #e74c3c !important; }
         .type-yoga { background-color: #9b59b6 !important; }
         .type-musculation { background-color: #2980b9 !important; }
         .type-boxing { background-color: #d35400 !important; }
 
-        /* تعديلات أزرار الجنتيليلا للبطاقات */
+       
         .btn-booking { background: #26B99A !important; color: white !important; border: none; }
         .btn-booking:hover { background: #169F85 !important; }
         .btn-waitlist { background: #95a5a6 !important; color: white !important; cursor: not-allowed; border: none; }
@@ -41,12 +41,12 @@
             to { opacity: 1; transform: translate(-50%, 0); }
         }
 
-        /* تنسيق كارت الـ Gentelella (x_panel) للـ Timetable */
+       
         .timetable-container { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; background: #ECECEC; padding: 12px; border-radius: 6px; }
         .day-column { background: #fff; border-radius: 4px; min-height: 450px; border: 1px solid #D9DEE4; display: flex; flex-direction: column; }
         .day-header { text-align: center; background: #2A3F54; color: white; padding: 10px; margin: 0; border-radius: 4px 4px 0 0; font-size: 14px; font-weight: 600; text-transform: uppercase; }
 
-        /* نافذة الإلغاء الأنيقة المنبثقة */
+      
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); }
         .modal-content { background-color: #ffffff; margin: 10% auto; border-radius: 6px; width: 450px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); overflow: hidden; position: relative; border: 1px solid rgba(0,0,0,0.2); }
         .close { position: absolute; right: 15px; top: 12px; color: #73879C; font-size: 22px; font-weight: bold; cursor: pointer; }
@@ -85,7 +85,7 @@
         {% endif %}</div>
         <a href="/logout/" style="margin-top:auto; color:#E74C3C; text-decoration:none; padding:15px; font-weight: 600;"><i class="fa fa-sign-out-alt"></i> Déconnexion</a>
     </div>
-    <!--le contenu principal-->
+    
     <div class="main-content">
         <div id="section-profile" class="section-container">
     <div class="x_panel" style="border-radius: 4px; border: 1px solid #D9DEE4;">
@@ -409,20 +409,17 @@
         } catch (e) { console.error("Error parsing sessions:", e); }
 
         function showSection(id, element) {
-    // 1. إخفاء كل الأقسام
     document.querySelectorAll('.section-container').forEach(s => s.classList.add('hidden'));
     
-    // 2. إظهار القسم المطلوب
     const target = document.getElementById(id);
     if(target) target.classList.remove('hidden');
     
-    // 3. تحديث تفعيل القائمة الجانبية (إذا تم تمرير element)
+
     if (element) {
         document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
         element.classList.add('active');
     }
 
-    // 4. إذا كان القسم هو "الإشعارات"، نرسل طلب التحديث
     if (id === 'section-notif') {
         fetch('/profile/mark-as-read/', { method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'} });
         const badge = document.querySelector('.badge');
@@ -449,7 +446,6 @@
                 const isFull = s.places <= 0;
                 const isRegistered = s.is_registered;
                 
-                // دمج كروت Gentelella داخل مساحة الحجز لتبدو منسقة ومتجاوبة بالكامل
                 grid.innerHTML += `
                     <div class="col-md-4 col-sm-6 col-xs-12" style="margin-bottom: 20px;">
                         <div class="thumbnail" style="border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.05); padding:15px; background:#fff; border:1px solid #E6E9ED;">
@@ -565,7 +561,6 @@
             })
             .then(response => {
             if (response.ok) {
-                // إزالة العنصر من الصفحة فوراً بدون إعادة تحميل
                 btnElement.parentElement.remove();
             } else {
                 alert("Erreur lors de la suppression.");
